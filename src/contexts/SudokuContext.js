@@ -8,7 +8,7 @@ function SudokuProvider({ children }) {
   const [boardDetails, setBoardDetails] = useState([]);
   const [showNewGameButton, setShowNewGameButton] = useState(false);
   const [initialBoard, setInitialBoard] = useState([]);
-  const [restAPI, useRestAPI] = useState(Configuration.useRestAPI);
+  const [restAPI, setRestAPI] = useState(Configuration.useRestAPI);
 
   const updateBoardNumbers = (board) => {
     setBoardNumbers(board);
@@ -49,6 +49,7 @@ function SudokuProvider({ children }) {
     <SudokuContext.Provider
       value={{
         restAPI,
+        setRestAPI,
         boardNumbers,
         updateBoardNumbers,
         generateBoardDetails,

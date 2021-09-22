@@ -4,36 +4,45 @@ import { RadioGroup } from "@headlessui/react";
 import { classNames } from "../../../utils/Utils";
 import SudokuApi from "../../../services/SudokuApi";
 import { SudokuContext } from "../../../contexts/SudokuContext";
+import _ from "lodash";
+import ToggleSwitch from "../Game/ToggleSwitch";
 
 const levels = [
   {
     name: "Super Easy",
     description: "The board will be generated with 79 numbers visible",
+    id: 1,
   },
   {
     name: "Easy",
     description: "The board will be generated with 51 numbers visible",
+    id: 2,
   },
   {
     name: "Intermediate",
     description: "The board will be generated with 31 numbers visible",
+    id: 3,
   },
   {
     name: "Hard",
     description: "The board will be generated with 25 numbers visible",
+    id: 4,
   },
   {
     name: "Extreme",
     description: "The board will be generated with 17 numbers visible",
+    id: 5,
   },
 ];
 
 const New = () => {
   const {
     restAPI,
+    setRestAPI,
     updateBoardNumbers,
     setShowNewGameButton,
     generateBoardDetails,
+    initialBoard,
     updateInitialBoard,
   } = useContext(SudokuContext);
   const [selectedLevel, setSelectedLevel] = useState(levels[0]);
@@ -45,14 +54,23 @@ const New = () => {
 
     // Let's get a new board
     if (restAPI) {
-      board = SudokuApi.getSudokuBoard(selectedLevel.name);
+      SudokuApi.getSudokuBoard(selectedLevel.id).then(function (response) {
+        board = response.data[0]._Board.boardNumber;
+        console.log(board);
+        // TODO: Move to one function
+        generateBoardDetails(board);
+        updateBoardNumbers(board);
+        updateInitialBoard(_.cloneDeep(board));
+        history.push("/game");
+      });
     } else {
       board = SudokuApi.noBackendBoard(selectedLevel.name);
+      // TODO: Move to one function
+      generateBoardDetails(board);
+      updateBoardNumbers(board);
+      updateInitialBoard(_.cloneDeep(board));
+      history.push("/game");
     }
-    generateBoardDetails(board);
-    updateBoardNumbers(board);
-    updateInitialBoard(board);
-    history.push("/game");
   };
 
   useEffect(() => {
@@ -129,6 +147,14 @@ const New = () => {
         >
           New game
         </button>
+      </div>
+      <div className="mt-2">
+        <ToggleSwitch
+          label="Use Rest API for boards"
+          description="Boards are currently identical in the local client and REST API"
+          enabled={restAPI}
+          changeToggle={setRestAPI}
+        />
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 const Configuration = {
   baseUri: "https://localhost:5001/api/",
-  useRestAPI: false,
+  useRestAPI: true,
 };
 
 module.exports = Configuration;

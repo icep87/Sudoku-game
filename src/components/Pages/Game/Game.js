@@ -72,7 +72,7 @@ const Game = () => {
         validateNumber(rowIndex, colIndex, boardNumbers[rowIndex][colIndex]);
       }
     }
-
+    setLiveValidation(true);
     solveCheck();
   };
 
@@ -91,10 +91,14 @@ const Game = () => {
     console.log("Running solveBoard");
     const solvedBoard = SudokuHelper.solveBoard(initialBoard);
     // We disable the validation module as the entire board is resolved
+    // TODO: Add validation if board cannot be solved. Right now this will just show an error.
     setLiveValidation(false);
     updateBoardNumbers(solvedBoard);
     setCheater(true);
     setRemainingAmount(countRemaining(boardNumbers));
+    // Solve board does not update the BoardDetails so SolveCheck() would fail.
+    // TODO: solveBoard should also update the BoardDetails
+    setSolvedModalOpen(true);
   };
 
   // Count remaining empty cells in the boardNumbers
@@ -102,7 +106,7 @@ const Game = () => {
     // TODO: Fix the NaN values count
     board.flat(Infinity).filter((item) => item === "").length;
 
-  // When boardNumber has changed, update the remainingAmount of cells to fill
+  // When boardNumber has changed, update the remainingAmount of cells to fill.
   useEffect(() => {
     setRemainingAmount(countRemaining(boardNumbers));
   }, [boardNumbers]);
@@ -158,14 +162,14 @@ const Game = () => {
           {/* TODO: Add loading state to the button */}
           <OptionsButton
             label="Validate the board"
-            description="This action will validate entire board (after running this Live Validation will be enabled"
+            description="This action will validate entire board (after running this Live Validation will be enabled)"
             buttonLabel="Validate"
             clickAction={validateBoard}
           />
           {/* TODO: Add loading state to the button */}
           <OptionsButton
             label="Solve the board"
-            description="This action will solve the entire board from the initial board"
+            description="This action will solve the entire board from the initial board. "
             buttonLabel="Solve"
             clickAction={solveBoard}
           />
